@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>SELAMAT DATANG DI SIE OMAYY 'V'</h1>
+        <nav>
+            <a href="index.html">Yuk Buruan Pesan Sekarang Sebelum Ketinggalan Antrian Kamu!</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form id="orderForm">
+                    <fieldset>
+                        <legend>Pilih Menu:</legend>
+                        
+                        <label for="menu">Menu:</label>
+                        <select id="menu" name="menu" onchange="updateImageAndPrice()">
+                            <option value="pilihan">Pilih Menu</option>
+                            <option value="somayGoreng">Somay Goreng</option>
+                            <option value="somayKuah">Somay + Kuah</option>
+                            <option value="somayPedas">Somay Pedas</option>
+                        </select>
+                        <br><br>
+                        
+                        <label for="variant1">Tambah Varian Rasa 1:</label>
+                        <select id="variant1" name="variant1">
+                            <option value="Tidak ada">Tidak ada</option>
+                            <option value="original">Original</option>
+                            <option value="mayones">Mayones</option>
+                            <option value="boncabe">Boncabe</option>
+                            <option value="kecap">Kecap</option>
+                            <option value="daunSop">Daun Sop</option>
+                        </select>
+                        <br><br>
+
+                        <label for="variant2">Tambah Varian Rasa 2:</label>
+                        <select id="variant2" name="variant2">
+                            <option value="Tidak ada">Tidak ada</option>
+                            <option value="original">Original</option>
+                            <option value="mayones">Mayones</option>
+                            <option value="boncabe">Boncabe</option>
+                            <option value="kecap">Kecap</option>
+                            <option value="daunSop">Daun Sop</option>
+                        </select>
+                        <br><br>
+                        
+                        <!-- Pilihan Level Pedas -->
+                        <label for="level" id="levelLabel" style="display:none;">Level Pedas:</label>
+                        <select id="level" name="level" style="display:none;">
+                            <option value="Tidak ada">Tidak ada</option>
+                            <option value="level1">Level 1</option>
+                            <option value="level2">Level 2</option>
+                            <option value="level3">Level 3</option>
+                            <option value="level4">Level 4</option>
+                            <option value="level5">Level 5</option>
+                        </select>
+                        <br><br>
+
+                        <label for="quantity">Jumlah Pesanan:</label>
+                        <input type="number" id="quantity" name="quantity" value="0" min="0" onchange="updateTotalPrice()">
+                        <br><br>
+
+                        <p>Harga per item: <span id="price">Rp 0</span></p>
+                        <p>Total Harga: <span id="totalPrice">Rp 0</span></p>
+                        
+                        <button type="button" onclick="submitOrder()">Kirim Pesanan</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="menu-image">
+                <img id="menuImage" src="image.jpg" alt="Gambar Somay" class="food-img">
+            </div>
+        </div>
+
+        <p id="orderMessage"></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Sie Omayy</p>
+    </footer>
+
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script>
+        let itemPrice = 0;
+
+        function updateImageAndPrice() {
+            const menu = document.getElementById('menu').value;
+            const menuImage = document.getElementById('menuImage');
+            const price = document.getElementById('price');
+            const quantity = document.getElementById('quantity').value;
+            const levelLabel = document.getElementById('levelLabel');
+            const levelSelect = document.getElementById('level');
+
+            // Reset variant and level
+            document.getElementById('variant1').value = 'Tidak ada';
+            document.getElementById('variant2').value = 'Tidak ada';
+            levelSelect.value = 'Tidak ada';
+
+            switch(menu) {
+                case 'somayGoreng':
+                    menuImage.src = 'Somayygoreng.jpg';
+                    menuImage.alt = 'Somay goreng';
+                    itemPrice = 10000;
+                    levelLabel.style.display = 'none';
+                    levelSelect.style.display = 'none';
+                    break;
+                case 'somayKuah':
+                    menuImage.src = 'somaykuah.jpeg';
+                    menuImage.alt = 'Somay Kuah';
+                    itemPrice = 12000;
+                    levelLabel.style.display = 'none';
+                    levelSelect.style.display = 'none';
+                    break;
+                case 'somayPedas':
+                    menuImage.src = 'somaypedas.jpg';
+                    menuImage.alt = 'Somay Pedas';
+                    itemPrice = 13000;
+                    levelLabel.style.display = 'inline';
+                    levelSelect.style.display = 'inline';
+                    break;
+                default:
+                    menuImage.src = 'image.jpg';
+                    menuImage.alt = 'Gambar Somay';
+                    itemPrice = 0;
+                    levelLabel.style.display = 'none';
+                    levelSelect.style.display = 'none';
+                    break;
+            }
+
+            price.textContent = 'Rp ' + itemPrice.toLocaleString();
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            const quantity = document.getElementById('quantity').value;
+            const totalPrice = document.getElementById('totalPrice');
+            const menu = document.getElementById('menu').value;
+
+            // Jika belum ada menu yang dipilih atau quantity 0, total harga tetap Rp 0
+            if (menu === 'pilihan' || quantity == 0) {
+                totalPrice.textContent = 'Rp 0';
+            } else {
+                const total = itemPrice * quantity;
+                totalPrice.textContent = 'Rp ' + total.toLocaleString();
+            }
+        }
+
+        function submitOrder() {
+            const menu = document.getElementById('menu').value;
+            const quantity = document.getElementById('quantity').value;
+            if (menu !== 'pilihan' && quantity > 0) {
+                document.getElementById('orderMessage').textContent = "Pesanan Anda telah dikirim. Terima kasih!";
+                setTimeout(() => {
+                    window.location.href = "pembayaran.html";
+                }, 2000);
+            } else {
+                alert("Silakan pilih menu dan jumlah pesanan yang valid.");
+            }
+        }
+    </script>
+</body>
+</html>
